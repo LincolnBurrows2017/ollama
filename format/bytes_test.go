@@ -40,6 +40,12 @@ func TestHumanBytes(t *testing.T) {
 		{1234, "1.2 KB"},
 		{1234567, "1.2 MB"},
 		{1234567890, "1.2 GB"},
+
+		// Test decimal values >= 10 (regression test for truncation bug)
+		{10500 * 1000 * 1000, "10.5 GB"},  // 10.5 GB
+		{11500 * 1000 * 1000, "11.5 GB"},  // 11.5 GB
+		{10000 * 1000 * 1000 * 1000, "10 TB"}, // 10 TB (whole number)
+		{10500 * 1000 * 1000 * 1000, "10.5 TB"}, // 10.5 TB
 	}
 
 	for _, tc := range tests {
