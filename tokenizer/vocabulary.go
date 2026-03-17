@@ -54,7 +54,7 @@ func (v *Vocabulary) addSpecials(ids []int32) []int32 {
 	}
 
 	if v.AddEOS && len(v.EOS) > 0 {
-		if len(ids) > 0 && slices.Contains(v.BOS, ids[len(ids)-1]) {
+		if len(ids) > 0 && slices.Contains(v.EOS, ids[len(ids)-1]) {
 			slog.Warn("adding eos token to prompt which already has it", "id", v.EOS)
 		}
 
