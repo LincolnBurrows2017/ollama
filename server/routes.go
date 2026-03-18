@@ -1203,7 +1203,7 @@ func GetModelInfo(req api.ShowRequest) (*api.ShowResponse, error) {
 	}
 
 	// For safetensors LLM models (experimental), populate details from config.json
-	if m.Config.ModelFormat == "safetensors" && slices.Contains(m.Config.Capabilities, "completion") {
+	if m.Config.ModelFormat == "safetensors" && slices.Contains(m.Config.Capabilities, model.CapabilityCompletion) {
 		if info, err := xserver.GetSafetensorsLLMInfo(name); err == nil {
 			if arch, ok := info["general.architecture"].(string); ok && arch != "" {
 				modelDetails.Family = arch
@@ -1314,7 +1314,7 @@ func GetModelInfo(req api.ShowRequest) (*api.ShowResponse, error) {
 	}
 
 	// For safetensors LLM models (experimental), populate ModelInfo from config.json
-	if m.Config.ModelFormat == "safetensors" && slices.Contains(m.Config.Capabilities, "completion") {
+	if m.Config.ModelFormat == "safetensors" && slices.Contains(m.Config.Capabilities, model.CapabilityCompletion) {
 		if info, err := xserver.GetSafetensorsLLMInfo(name); err == nil {
 			resp.ModelInfo = info
 		}

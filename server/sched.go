@@ -221,7 +221,7 @@ func (s *Scheduler) processPending(ctx context.Context) {
 					}
 
 					// Check for image generation models - all use MLX runner
-					if slices.Contains(pending.model.Config.Capabilities, "image") {
+					if slices.Contains(pending.model.Config.Capabilities, model.CapabilityImage) {
 						if s.loadMLX(pending) {
 							break
 						}
@@ -230,7 +230,7 @@ func (s *Scheduler) processPending(ctx context.Context) {
 
 					// Check for experimental safetensors LLM models
 					if pending.model.IsMLX() {
-						if slices.Contains(pending.model.Config.Capabilities, "completion") {
+						if slices.Contains(pending.model.Config.Capabilities, model.CapabilityCompletion) {
 							// LLM model with safetensors format - use MLX runner
 							if s.loadMLX(pending) {
 								break
@@ -598,7 +598,7 @@ func (s *Scheduler) loadMLX(req *LlmRequest) bool {
 	var server llm.LlamaServer
 	var err error
 
-	if slices.Contains(req.model.Config.Capabilities, "image") {
+	if slices.Contains(req.model.Config.Capabilities, model.CapabilityImage) {
 		server, err = imagegen.NewServer(modelName)
 	} else {
 		server, err = mlxrunner.NewClient(modelName)
@@ -621,7 +621,7 @@ func (s *Scheduler) loadMLX(req *LlmRequest) bool {
 		llama:           server,
 		Options:         &req.opts,
 		loading:         false,
-		isImagegen:      slices.Contains(req.model.Config.Capabilities, "image"),
+		isImagegen:      slices.Contains(req.model.Config.Capabilities, model.CapabilityImage),
 		sessionDuration: sessionDuration,
 		totalSize:       totalSize,
 		vramSize:        vramSize,
@@ -731,7 +731,7 @@ func (runner *runnerRef) needsReload(ctx context.Context, req *LlmRequest) bool 
 	defer runner.refMu.Unlock()
 
 	// Check if runner type (imagegen vs mlxrunner) matches what's requested.
-	wantImagegen := slices.Contains(req.model.Config.Capabilities, "image")
+	wantImagegen := slices.Contains(req.model.Config.Capabilities, model.CapabilityImage)
 	if runner.isImagegen != wantImagegen {
 		return true
 	}
